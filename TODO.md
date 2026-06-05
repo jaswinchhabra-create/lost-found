@@ -1,0 +1,22 @@
+# TODO - Lost & Found (Three.js + Full-stack)
+
+- [x] Create project structure (frontend + backend)
+- [x] Implement backend with authentication + image upload + lost/found CRUD
+- [x] Use SQLite for persistence
+- [x] Implement JWT-based login (convenient username/email + password)
+- [x] Implement backend image storage and serving
+- [x] Implement Three.js fancy frontend (3D board + cards) with auth + upload UI
+- [x] Wire frontend to backend APIs
+- [x] Add basic validation and error handling
+- [x] Provide run instructions (dev mode) and initial schema/data notes
+- [x] Premium design system with glassmorphism, animations, gradients
+- [x] Header bar with logo and live stats
+- [x] Animated shader grid floor
+- [x] Floating particle effects
+- [x] Orbiting camera
+- [x] Card hover tooltips
+- [x] Drag-and-drop file upload zone
+- [x] Loading spinners and status messages
+- [x] Modal with full image display
+- [x] Google Fonts (Inter + Outfit)
+- [x] Responsive design

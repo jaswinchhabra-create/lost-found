@@ -1,0 +1,49 @@
+/* ========================================================================
+   CARD LABELS (HTML OVERLAYS ON 3D)
+   ======================================================================== */
+.card-label {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 5;
+  pointer-events: none;
+  text-align: center;
+  background: rgba(12, 16, 32, 0.85);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
+  transition: opacity 0.2s ease;
+}
+
+.card-label-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-label-type {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.card-label-type.lost { color: var(--accent-violet-light); }
+.card-label-type.found { color: var(--accent-emerald-light); }
+
+.card-label-tag {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
