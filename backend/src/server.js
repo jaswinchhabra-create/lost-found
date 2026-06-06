@@ -38,27 +38,9 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }))
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postsRoutes)
 
-// Serve frontend (single-deployment mode)
-// When deploying, build the frontend to: frontend/dist
-// Serve repo root relative to current working directory.
-const repoRoot = path.resolve(process.cwd(), '..');
-const distDir = path.join(repoRoot, 'frontend', 'dist');
+// Backend API only mode
+// Frontend should be hosted separately.
 
-
-
-
-if (fs.existsSync(distDir)) {
-  app.use(express.static(distDir));
-
-  // SPA fallback: Vite app routes should all return index.html
-  app.get('*', (req, res, next) => {
-    // Let API routes and uploads fall through to their handlers
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
-    res.sendFile(path.join(distDir, 'index.html'));
-  });
-} else {
-  console.warn(`Frontend dist not found at: ${distDir}. Backend will serve only the API.`);
-}
 
 const port = process.env.PORT || 4000
 app.listen(port, () => {
