@@ -1,38 +1,85 @@
 const path = require('path')
-const sqlite3 = require('sqlite3').verbose()
+const fs = require('fs')
+const initSqlJs = require('sql.js')
 
-function openDb(dbPath) {
+// ---- sql.js (WASM, no native binaries) ----
+// We load the database file into memory, then keep it in process.
+// This is enough for typical Render usage; persistence depends on writes being flushed.
+
+async function openDb(dbPath) {
   const abs = path.isAbsolute(dbPath) ? dbPath : path.join(process.cwd(), dbPath)
-  const db = new sqlite3.Database(abs)
+
+  const SQL = await initSqlJs({ locateFile: (file) => `node_modules/sql.js/dist/${file}` })
+
+  let fileBuffer = null
+  if (fs.existsSync(abs)) {
+    fileBuffer = fs.readFileSync(abs)
+  }
+
+  const db = new SQL.Database(fileBuffer || undefined)
+  db.__dbFilePath = abs
   return db
+}
+
+function flushDb(db) {
+  try {
+    if (!db || !db.__dbFilePath) return
+    const data = Buffer.from(db.export())
+    fs.writeFileSync(db.__dbFilePath, data)
+  } catch (_e) {
+    // ignore persistence issues; app should still function in-memory
+  }
 }
 
 function runAsync(db, sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) return reject(err)
-      resolve({ lastID: this.lastID, changes: this.changes })
-    })
+    try {
+      const stmt = db.prepare(sql)
+      stmt.bind(params)
+      while (stmt.step()) {
+        // ignore rows
+      }
+      stmt.free()
+      flushDb(db)
+      resolve({ lastID: undefined, changes: undefined })
+    } catch (e) {
+      reject(e)
+    }
   })
 }
 
 function allAsync(db, sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) return reject(err)
+    try {
+      const stmt = db.prepare(sql)
+      stmt.bind(params)
+      const rows = []
+      while (stmt.step()) {
+        rows.push(stmt.getAsObject())
+      }
+      stmt.free()
       resolve(rows)
-    })
+    } catch (e) {
+      reject(e)
+    }
   })
 }
 
 function getAsync(db, sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) return reject(err)
+    try {
+      const stmt = db.prepare(sql)
+      stmt.bind(params)
+      const row = stmt.step() ? stmt.getAsObject() : null
+      stmt.free()
       resolve(row)
-    })
+    } catch (e) {
+      reject(e)
+    }
   })
 }
+
+
 
 async function initDb(db) {
   await runAsync(
@@ -74,4 +121,7 @@ async function initDb(db) {
 }
 
 module.exports = { openDb, initDb, runAsync, allAsync, getAsync }
+
+
+
 

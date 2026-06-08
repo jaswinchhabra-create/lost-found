@@ -8,7 +8,7 @@ import { setupPostUI } from './ui/post-ui.js'
 import { setupSidebarFeed } from './ui/sidebar-feed.js'
 import { setupFilters } from './ui/filters.js'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://lost-found-slgs.onrender.com'
 
 export async function initApp() {
   const state = new AppState(API_BASE)

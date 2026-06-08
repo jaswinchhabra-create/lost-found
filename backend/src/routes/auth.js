@@ -1,5 +1,6 @@
 const express = require('express')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
+
 const { v4: uuidv4 } = require('uuid')
 const { getAsync, runAsync } = require('../db')
 const { signToken } = require('../auth')

@@ -21,10 +21,16 @@ fs.mkdirSync(uploadDir, { recursive: true })
 app.use('/uploads', express.static(uploadDir))
 
 const dbPath = process.env.DB_PATH || 'lostfound.db'
-const db = openDb(dbPath)
-app.locals.db = db
+const dbPromise = openDb(dbPath)
 
-initDb(db)
+app.locals.dbPromise = dbPromise
+
+dbPromise
+  .then((db) => {
+    console.log('DB open ok. typeof db.prepare:', typeof db.prepare, 'typeof db.exec:', typeof db.exec)
+    app.locals.db = db
+    return initDb(db)
+  })
   .then(() => {
     console.log('DB ready')
   })
@@ -32,6 +38,8 @@ initDb(db)
     console.error('DB init failed', e)
     process.exit(1)
   })
+
+
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 
